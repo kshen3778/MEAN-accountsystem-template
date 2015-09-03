@@ -6,6 +6,7 @@ var LocationSchema = new mongoose.Schema({
     city: String,
     country: String,
     data: String,
+    author: String,
     user: {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
 });
 
