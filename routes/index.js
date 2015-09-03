@@ -8,14 +8,15 @@ var Location = mongoose.model('Location');
 var router = express.Router();
 
 var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
 //get user's locations
-router.get('/locations', function(req,res,next){
-    req.payload.populate('locations', function(err, locations){
+router.get('/locations', auth, function(req,res,next){
+    req.payload.user.populate('locations', function(err, locations){
         if(err){
             return next(err);
         }
@@ -26,7 +27,6 @@ router.get('/locations', function(req,res,next){
 //create locations
 router.post('/locations', auth, function(req,res,next){
    var location = new Location(req.body); 
-   location.author = req.payload.email;
    location.user = req.payload.user;
    
    location.save(function(err, location){
