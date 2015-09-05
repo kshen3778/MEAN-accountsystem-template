@@ -106,3 +106,79 @@ app.controller('MainCtrl', [
         };
     }
 ]);
+
+//controller for navbar
+app.controller('NavCtrl', [
+'$scope',
+'auth',
+function($scope,auth){
+  //expose methods from auth factory
+  $scope.isLoggedIn = auth.isLoggedIn;
+  $scope.currentUser = auth.currentUser;
+  $scope.logOut = auth.logOut;
+}]);
+
+app.controller('AuthCtrl', [
+'$scope',
+'$state',
+'auth',
+function($scope, $state, auth){
+  $scope.user = {};
+  
+  //calls auth factory's register method
+  $scope.register = function(){
+    auth.register($scope.user).error(function(error){
+      $scope.error = error;
+    }).then(function(){
+      $state.go('home');
+    });
+  };
+  
+  //calls the auth factory's login method
+  $scope.logIn = function(){
+    auth.logIn($scope.user).error(function(error){
+      $scope.error = error;
+    }).then(function(){
+      $state.go('home');
+    });
+  };
+}]);
+
+app.config([
+'$stateProvider',
+'$urlRouterProvider',
+function($stateProvider, $urlRouterProvider){
+  
+  //home state
+  $stateProvider.state('home', {
+    url: '/home',
+    templateUrl: '/home.html',
+    controller: 'MainCtrl'
+  });
+  
+  //login state
+  $stateProvider.state('login', {
+    url: '/login',
+    templateUrl: '/login.html',
+    controller: 'AuthCtrl',
+    onEnter: ['$state', 'auth', function($state,auth){
+      if(auth.isLoggedIn()){
+        $state.go('home');
+      }
+    }]
+  });
+  
+  $stateProvider.state('register', {
+    url: '/register',
+    templateUrl: '/register.html',
+    controller: 'AuthCtrl',
+    onEnter: ['$state', 'auth', function($state,auth){
+      if(auth.isLoggedIn()){
+        $state.go('home');
+      }
+    }]
+  });
+  
+  $urlRouterProvider.otherwise('home');
+  
+}]);

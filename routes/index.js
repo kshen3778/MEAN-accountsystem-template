@@ -11,18 +11,24 @@ var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+  //res.render('index', { title: 'Express' });
+  req.payload.user.populate('locations', function(err, locations){
+        if(err){
+            return next(err);
+        }
+        res.json(req.post);
+  });
 });
 
 //get user's locations
-router.get('/locations', auth, function(req,res,next){
+/*router.get('/locations', auth, function(req,res,next){
     req.payload.user.populate('locations', function(err, locations){
         if(err){
             return next(err);
         }
         res.json(req.post);
-    })
-});
+    });
+});*/
 
 //create locations
 router.post('/locations', auth, function(req,res,next){
