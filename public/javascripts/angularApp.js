@@ -149,10 +149,10 @@ app.config([
 '$urlRouterProvider',
 function($stateProvider, $urlRouterProvider){
   
-  //home state
-  $stateProvider.state('home', {
-    url: '/home',
-    templateUrl: '/home.html',
+  //locations state
+  $stateProvider.state('locations', {
+    url: '/locations',
+    templateUrl: '/locations.html',
     controller: 'MainCtrl'
   });
   

@@ -11,24 +11,18 @@ var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  //res.render('index', { title: 'Express' });
-  req.payload.user.populate('locations', function(err, locations){
-        if(err){
-            return next(err);
-        }
-        res.json(req.post);
-  });
+  res.render('index', { title: 'Express' });
 });
 
 //get user's locations
-/*router.get('/locations', auth, function(req,res,next){
+router.get('/locations', auth, function(req,res,next){
     req.payload.user.populate('locations', function(err, locations){
         if(err){
             return next(err);
         }
-        res.json(req.post);
+        res.json(req.locations);
     });
-});*/
+});
 
 //create locations
 router.post('/locations', auth, function(req,res,next){
@@ -36,16 +30,19 @@ router.post('/locations', auth, function(req,res,next){
    location.user = req.payload.user;
    
    location.save(function(err, location){
-       if(err){
-           return next(err);
-       }
-       req.payload.user.locations.push(location);
-       req.payload.user.save(function(err, user){
-          if(err){
-              return next(err);
-          }
-          res.json(location);
-       });
+       //User.findOne({email: req.payload.email}, function(err, user){
+           if(err){
+               return next(err);
+           }
+           //req.payload.user.locations.push(location);
+           //console.log(req.payload.user);
+           User.update({email: req.payload.email},{$addToSet:{locations: location}},function(err, user){
+              if(err){
+                  return next(err);
+              }
+              res.json(location);
+           });
+       //});
    });
 });
 
