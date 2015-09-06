@@ -16,11 +16,18 @@ router.get('/', function(req, res, next) {
 
 //get user's locations
 router.get('/locations', auth, function(req,res,next){
-    req.payload.user.populate('locations', function(err, locations){
-        if(err){
-            return next(err);
-        }
-        res.json(req.locations);
+    User.findOne({email: req.payload.user.email}, function(err, user){
+        
+        if(err){return err;}
+        console.log(user);
+        user.populate('locations', function(err, locations){
+            if(err){
+                return next(err);
+            }
+            console.log("user's locations: ");
+            console.log(locations.locations);
+            res.json(locations.locations);
+        });
     });
 });
 

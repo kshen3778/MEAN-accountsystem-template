@@ -11,7 +11,10 @@ app.factory('locations', ['$http', 'auth', function($http, auth){
         //pass JWT token
         headers: {Authorization: 'Bearer ' + auth.getToken()}
       }).success(function(data){
-        angular.copy(data, o.locations);    
+        console.log("angular location json data: ");
+        console.log(data);
+        angular.copy(data, o.locations);   
+        
       });
     };
     
@@ -101,7 +104,7 @@ app.controller('MainCtrl', [
              address: $scope.address,
              city: $scope.city,
              country: $scope.country,
-             data: $scope.data,
+             data: $scope.data
           });
         };
     }
@@ -153,7 +156,12 @@ function($stateProvider, $urlRouterProvider){
   $stateProvider.state('locations', {
     url: '/locations',
     templateUrl: '/locations.html',
-    controller: 'MainCtrl'
+    controller: 'MainCtrl',
+    resolve: {
+      locationsPromise: ['locations', function(locations){
+        return locations.getAll();
+      }]
+    }
   });
   
   //login state
