@@ -53,6 +53,27 @@ router.post('/locations', auth, function(req,res,next){
    });
 });
 
+//preload location
+router.param('location', function(req,res,next,id){
+   var query = Location.findById(id);
+   query.exec(function(err, location){
+      if(err){
+          return next(err);
+      }
+      if(!location){
+          return next(new Error('can\'t find location'));
+      }
+      
+      req.location = location;
+      return next();
+   });
+});
+
+//get specific location
+router.get('/locations/:location',function(req, res, next){
+    res.json(req.location);
+});
+
 //registration
 router.post('/register', function(req, res, next){
    if(!req.body.email || !req.body.password){

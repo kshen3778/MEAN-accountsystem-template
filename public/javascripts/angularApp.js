@@ -27,6 +27,13 @@ app.factory('locations', ['$http', 'auth', function($http, auth){
       });
     };
     
+    //retrieve a single location
+    o.get = function(id){
+      return $http.get('/posts/' + id).then(function(res){
+        return res.data;
+      });
+    };
+    
     return o;
 }]);
 
@@ -147,6 +154,17 @@ function($scope, $state, auth){
   };
 }]);
 
+//control a location's details
+app.controller('LocationCtrl', [
+'$scope',
+'locations',
+'location', //injected via the location state's resolve
+'auth',
+function($scope, locations, location, auth){
+  $scope.location = location;
+  $scope.isLoggedIn = auth.isLoggedIn;
+}]);
+
 app.config([
 '$stateProvider',
 '$urlRouterProvider',
@@ -160,6 +178,19 @@ function($stateProvider, $urlRouterProvider){
     resolve: {
       locationsPromise: ['locations', function(locations){
         return locations.getAll();
+      }]
+    }
+  });
+  
+  //location state(single location)
+  $stateProvider.state('location', {
+    url: '/locations/{id}',
+    templateUrl: '/location.html',
+    controller: 'LocationCtrl',
+    resolve: {
+      //injected into LocationCtrl
+      location: ['$stateParams', 'locations', function($stateParams, locations){
+        return locations.get($stateParams.id);
       }]
     }
   });

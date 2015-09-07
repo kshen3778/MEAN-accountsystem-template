@@ -31,27 +31,11 @@
             
             <div ng-show="isLoggedIn()" ng-repeat="location in locations">
                 <span style="font-size:20px; margin-left:10px">
+                    
                     <span ng-show="location.name">
-                        {{location.name}}
+                        <a href="#/locations/{{location._id}}">{{location.name}}</a>
                     </span>
-                    <br>
-                    <span ng-show="location.address">
-                        {{location.address}}
-                    </span>
-                    <br>
-                    <span ng-show="location.city">
-                        {{location.city}}
-                    </span>
-                    <br>
-                    <span ng-show="location.country">
-                        {{location.country}}
-                    </span>
-                    <br>
-                    <span ng-show="location.data">
-                        {{location.data}}
-                    </span>
-                    <br>
-                    <br>
+                    
                 </span>
             </div>
             
