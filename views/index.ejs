@@ -66,6 +66,61 @@
             
         </script>
         
+        <script type="text/ng-template" id="/location.html">
+            <div class="page-header" ng-show="isLoggedIn()">
+                <h3>
+                    <span ng-show="location.title">
+                        Name: {{location.name}}
+                    </span>
+                    <br>
+                    <span ng-show="location.address">
+                        Location: {{location.address}}
+                    </span>
+                    <br>
+                    <span ng-show="location.city">
+                        City: {{location.city}}
+                    </span>
+                    <br>
+                    <span ng-show="location.country">
+                        Country: {{location.country}}
+                    </span>
+                    <br>
+                    <span ng-show="location.data">
+                        Data: {{location.data}}
+                    </span>
+                    <br>
+                    <span ng-show="location.user">
+                        Creator: {{location.user.email}}
+                    </span>
+                </h3>
+            </div>
+            
+            <form ng-submit="editLocation()" ng-show="isLoggedIn()" style="margin-top:30px;">
+                <h3>Edit location</h3>
+                        
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Name" ng-model="name"></input>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Address" ng-model="address"></input>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="City" ng-model="city"></input>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Country" ng-model="country"></input>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Data" ng-model="data"></input>
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </form>
+            
+            <div ng-hide="isLoggedIn()">
+                <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can edit your locations.</h3>
+            </div>
+        </script>
+        
          <!--registration template-->
        <script type="text/ng-template" id="/register.html">
         

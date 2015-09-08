@@ -11,8 +11,6 @@ app.factory('locations', ['$http', 'auth', function($http, auth){
         //pass JWT token
         headers: {Authorization: 'Bearer ' + auth.getToken()}
       }).success(function(data){
-        console.log("angular location json data: ");
-        console.log(data);
         angular.copy(data, o.locations);   
         
       });
@@ -29,7 +27,7 @@ app.factory('locations', ['$http', 'auth', function($http, auth){
     
     //retrieve a single location
     o.get = function(id){
-      return $http.get('/posts/' + id).then(function(res){
+      return $http.get('/locations/' + id).then(function(res){
         return res.data;
       });
     };
