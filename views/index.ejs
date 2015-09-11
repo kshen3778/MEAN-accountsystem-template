@@ -89,12 +89,12 @@
                         Data: {{location.data}}
                     </span>
                     <br>
-                    <span ng-show="location.user">
-                        Creator: {{location.user.email}}
+                    <span ng-show="location.author">
+                        Creator: {{location.author}}
                     </span>
                 </h3>
             </div>
-            //editLocation(location) doesn't work
+            
             <form ng-submit="editLocation(location)" ng-show="isLoggedIn()" style="margin-top:30px;">
                 <h3>Edit location</h3>
                         

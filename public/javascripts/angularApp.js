@@ -123,7 +123,7 @@ app.controller('MainCtrl', [
              address: $scope.address,
              city: $scope.city,
              country: $scope.country,
-             data: $scope.data
+             data: $scope.data,
           });
         };
     }

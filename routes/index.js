@@ -33,6 +33,7 @@ router.get('/locations', auth, function(req,res,next){
 router.post('/locations', auth, function(req,res,next){
    var location = new Location(req.body); 
    location.user = req.payload.user;
+   location.author = req.payload.email;
    
    location.save(function(err, location){
        //User.findOne({email: req.payload.email}, function(err, user){
@@ -94,9 +95,11 @@ router.post('/register', function(req, res, next){
    user.email = req.body.email;
    user.setPassword(req.body.password);
    user.save(function(err){
-       if(err){ return next(err); }
-        console.log("registration");
-        console.log(user);
+       if(err){
+           return next(err); 
+       }
+       console.log("registration");
+       console.log(user);
        return res.json({token: user.generateJWT()});
    });
 });
