@@ -19,13 +19,11 @@ router.get('/locations', auth, function(req,res,next){
     User.findOne({email: req.payload.user.email}, function(err, user){
         
         if(err){return err;}
-        console.log(user);
+
         user.populate('locations', function(err, locations){
             if(err){
                 return next(err);
             }
-            console.log("user's locations: ");
-            console.log(locations.locations);
             res.json(locations.locations);
         });
     });
@@ -74,6 +72,17 @@ router.get('/locations/:location',function(req, res, next){
     res.json(req.location);
 });
 
+//edit specific location
+router.put('/locations/:location/edit', auth, function(req,res,next){
+   req.location.edit(req.body, function(err, location){
+       if(err){
+           return next(err);
+       }
+       res.json(location);
+   });
+   
+});
+
 //registration
 router.post('/register', function(req, res, next){
    if(!req.body.email || !req.body.password){
@@ -86,6 +95,8 @@ router.post('/register', function(req, res, next){
    user.setPassword(req.body.password);
    user.save(function(err){
        if(err){ return next(err); }
+        console.log("registration");
+        console.log(user);
        return res.json({token: user.generateJWT()});
    });
 });
@@ -97,8 +108,11 @@ router.post('/login', function(req,res,next){
    }
    
    passport.authenticate('local', function(err, user, info){
-       if(err){ return next(err); }
-       
+       if(err){ 
+           return next(err); 
+       }
+       console.log(user);
+       console.log(info);
        if(user){
            return res.json({token: user.generateJWT()});
        }else{

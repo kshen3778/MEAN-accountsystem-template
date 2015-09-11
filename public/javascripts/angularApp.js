@@ -1,5 +1,7 @@
 var app = angular.module('test', ['ui.router']);
-
+//test account:
+//user: helloworl@gmail.com (missing 'd' on purpose)
+//password: helloworld
 app.factory('locations', ['$http', 'auth', function($http, auth){
     var o = {
       locations: []  
@@ -29,6 +31,16 @@ app.factory('locations', ['$http', 'auth', function($http, auth){
     o.get = function(id){
       return $http.get('/locations/' + id).then(function(res){
         return res.data;
+      });
+    };
+    
+    //edit a location
+    o.editLocation = function(location, edits){
+      return $http.put('/locations/' + location + '/edit', edits, {
+        headers: {Authorization: 'Bearer ' + auth.getToken()}
+      }).success(function(data){
+        location = data;
+        
       });
     };
     
@@ -77,6 +89,8 @@ app.factory('auth', ['$http', '$window', function($http, $window){
     
     //login and save the token
     auth.logIn = function(user){
+      console.log("in auth factory's login method");
+      console.log(user);
       return $http.post('/login', user).success(function(data){
         auth.saveToken(data.token); 
       });
@@ -138,16 +152,18 @@ function($scope, $state, auth){
     auth.register($scope.user).error(function(error){
       $scope.error = error;
     }).then(function(){
-      $state.go('home');
+      $state.go('locations');
     });
   };
   
   //calls the auth factory's login method
   $scope.logIn = function(){
+    console.log("in AuthCtrl");
+    console.log($scope.user);
     auth.logIn($scope.user).error(function(error){
       $scope.error = error;
     }).then(function(){
-      $state.go('home');
+      $state.go('locations');
     });
   };
 }]);
@@ -161,6 +177,18 @@ app.controller('LocationCtrl', [
 function($scope, locations, location, auth){
   $scope.location = location;
   $scope.isLoggedIn = auth.isLoggedIn;
+  
+  $scope.editLocation = function(location){
+      /*if($scope.body){
+        locations.editLocation(location._id, {
+          body: $scope.body
+        });
+        $scope.body = '';
+      }*/
+      location.editLocation(location, {body: $scope.body});
+      $scope.body = '';
+  };
+  
 }]);
 
 app.config([
@@ -200,7 +228,7 @@ function($stateProvider, $urlRouterProvider){
     controller: 'AuthCtrl',
     onEnter: ['$state', 'auth', function($state,auth){
       if(auth.isLoggedIn()){
-        $state.go('home');
+        $state.go('locations');
       }
     }]
   });
@@ -211,7 +239,7 @@ function($stateProvider, $urlRouterProvider){
     controller: 'AuthCtrl',
     onEnter: ['$state', 'auth', function($state,auth){
       if(auth.isLoggedIn()){
-        $state.go('home');
+        $state.go('locations');
       }
     }]
   });
