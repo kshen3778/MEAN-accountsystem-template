@@ -36,11 +36,10 @@ app.factory('locations', ['$http', 'auth', function($http, auth){
     
     //edit a location
     o.editLocation = function(location, edits){
+      console.log("edits");
+      console.log(edits);
       return $http.put('/locations/' + location + '/edit', edits, {
         headers: {Authorization: 'Bearer ' + auth.getToken()}
-      }).success(function(data){
-        location = data;
-        
       });
     };
     
@@ -175,18 +174,29 @@ app.controller('LocationCtrl', [
 'location', //injected via the location state's resolve
 'auth',
 function($scope, locations, location, auth){
+  console.log(location);
   $scope.location = location;
   $scope.isLoggedIn = auth.isLoggedIn;
   
-  $scope.editLocation = function(location){
-      /*if($scope.body){
+  $scope.editLocation = function(){
+        console.log("edit location");
         locations.editLocation(location._id, {
-          body: $scope.body
+          //body: $scope.body
+          edits: {
+            name: $scope.name,
+            address: $scope.address,
+            city: $scope.city,
+            country: $scope.country,
+            data: $scope.data
+          }
+        }).success(function(data){
+          console.log("new location data");
+          console.log(data);
+          location = data;
         });
+
         $scope.body = '';
-      }*/
-      location.editLocation(location, {body: $scope.body});
-      $scope.body = '';
+
   };
   
 }]);
