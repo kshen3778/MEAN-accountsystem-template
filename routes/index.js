@@ -75,10 +75,14 @@ router.get('/locations/:location',function(req, res, next){
 
 //edit specific location
 router.put('/locations/:location/edit', auth, function(req,res,next){
-   req.location.edit(req.body, function(err, location){
+   console.log("req.");
+   console.log(req); //<---- the problem lies in req.body
+   req.location.edit(req, function(err, location){
        if(err){
            return next(err);
        }
+       console.log("new location json");
+       console.log(location);
        res.json(location);
    });
    
