@@ -234,7 +234,8 @@ function($stateProvider, $urlRouterProvider){
   //login state
   $stateProvider.state('login', {
     url: '/login',
-    templateUrl: '/login.html',
+    templateUrl: 'partials/login.html',
+    //template: '<p>Yo wassup</p>',
     controller: 'AuthCtrl',
     onEnter: ['$state', 'auth', function($state,auth){
       if(auth.isLoggedIn()){
