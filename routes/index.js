@@ -76,8 +76,8 @@ router.get('/locations/:location',function(req, res, next){
 //edit specific location
 router.put('/locations/:location/edit', auth, function(req,res,next){
    console.log("req.");
-   console.log(req); //<---- the problem lies in req.body
-   req.location.edit(req, function(err, location){
+   console.log(req.edits); //<---- the problem lies in req.body
+   req.location.edit(req.edits, function(err, location){
        if(err){
            return next(err);
        }
