@@ -3,6 +3,7 @@ var mongoose = require('mongoose');
 var passport = require('passport');
 var jwt = require('express-jwt');
 var User = mongoose.model('User');
+var Organization = mongoose.model('Organization');
 var Location = mongoose.model('Location');
 
 var router = express.Router();
@@ -88,7 +89,7 @@ router.put('/locations/:location/edit', auth, function(req,res,next){
    
 });
 
-//registration
+//user registration
 router.post('/register', function(req, res, next){
    if(!req.body.email || !req.body.password){
        return res.status(400).json({message: 'Please fill out all fields'});
@@ -108,13 +109,32 @@ router.post('/register', function(req, res, next){
    });
 });
 
-//login
+//organization registration
+router.post('/registerorg', function(req, res, next){
+   if(!req.body.email || !req.body.password){
+       return res.status(400).json({message: 'Please fill out all fields'});
+   }
+   
+   var org = new Organization();
+   
+   org.email = req.body.email;
+   org.setPassword(req.body.password);
+   org.save(function(err){
+      if(err){
+          return next(err);
+      }
+      return res.json({token: org.generateJWT()});
+   });
+   
+});
+
+//user login
 router.post('/login', function(req,res,next){
    if(!req.body.email || !req.body.password){
        return res.status(400).json({message: 'Please fill out all fields'});
    }
    
-   passport.authenticate('local', function(err, user, info){
+   passport.authenticate('user-local', function(err, user, info){
        if(err){ 
            return next(err); 
        }
@@ -127,5 +147,23 @@ router.post('/login', function(req,res,next){
        }
    })(req,res,next);
 });
+
+//organization login
+router.post('/loginorg', function(req, res, next){
+    if(!req.body.email || !req.body.password){
+        return res.status(400).json({message: 'Please fill out all fields'});
+    }
+    
+    passport.authenticate('org-local', function(err, org, info){
+        if(err){
+            return next(err);
+        }
+        if(org){
+            return res.json({token: org.generateJWT()});
+        }else{
+            return res.status(401).json(info);
+        }
+    })(req,res,next);
+})
 
 module.exports = router;

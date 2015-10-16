@@ -5,7 +5,9 @@ var OrganizationSchema = new mongoose.Schema({
     description: String,
     city: String,
     country: String,
-    email: String,
+    email: {type: String, unique: true},
+    hash: String,
+    salt: String,
     tasks: [{type: mongoose.Schema.Types.ObjectId, ref: 'Task'}]
 });
 
