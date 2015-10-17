@@ -70,7 +70,7 @@ app.factory('auth', ['$http', '$window', function($http, $window){
       }
     };
     
-    //return username of logged in user
+    //return email of logged in user or org
     auth.currentUser = function(){
       if(auth.isLoggedIn()){
         var token = auth.getToken();
@@ -86,12 +86,26 @@ app.factory('auth', ['$http', '$window', function($http, $window){
       });
     };
     
-    //login and save the token
+    //register the org and save token
+    auth.registerOrg = function(org){
+      return $http.post('/registerorg', org).success(function(data){
+        auth.saveToken(data.token);
+      });
+    };
+    
+    //login user and save the token
     auth.logIn = function(user){
       console.log("in auth factory's login method");
       console.log(user);
       return $http.post('/login', user).success(function(data){
         auth.saveToken(data.token); 
+      });
+    };
+    
+    //login an org
+    auth.logInOrg = function(org){
+      return $http.post('/loginorg', org).success(function(data){
+        auth.saveToken(data.token);
       });
     };
     
@@ -151,8 +165,17 @@ function($scope, $state, auth){
     auth.register($scope.user).error(function(error){
       $scope.error = error;
     }).then(function(){
-      $state.go('locations');
+      $state.go('dashboard');
     });
+  };
+  
+  //calls auth factory's registerOrg method
+  $scope.registerOrg = function(){
+    auth.registerOrg($scope.org).error(function(error){
+      $scope.error = error;
+    }).then(function(){
+      $state.go('orgdashboard'); //organization dashboard
+    })
   };
   
   //calls the auth factory's login method
@@ -162,9 +185,19 @@ function($scope, $state, auth){
     auth.logIn($scope.user).error(function(error){
       $scope.error = error;
     }).then(function(){
-      $state.go('locations');
+      $state.go('dashboard'); //user dashboard
     });
   };
+  
+  //calls the auth factory's logInOrg method
+  $scope.logInOrg = function(){
+    auth.logInOrg($scope.org).error(function(error){
+      $scope.error = error;
+    }).then(function(){
+      $state.go('orgdashboard');
+    });
+  };
+  
 }]);
 
 //control a location's details
