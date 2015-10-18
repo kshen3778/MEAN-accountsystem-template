@@ -264,14 +264,26 @@ function($stateProvider, $urlRouterProvider){
     }
   });
   
-  //login state
+  //user login state
   $stateProvider.state('login', {
     url: '/login',
     templateUrl: 'partials/login.html',
     controller: 'AuthCtrl',
     onEnter: ['$state', 'auth', function($state,auth){
       if(auth.isLoggedIn()){
-        $state.go('locations');
+        $state.go('dashboard');
+      }
+    }]
+  });
+  
+  //organization login state
+  $stateProvider.state('loginOrg', {
+    url: '/loginOrg',
+    templateUrl: 'partials/loginOrg.html',
+    controller: 'AuthCtrl',
+    onEnter: ['$state', 'auth', function($state, auth){
+      if(auth.isLoggedIn()){
+        $state.go('orgdashboard');
       }
     }]
   });
@@ -282,7 +294,18 @@ function($stateProvider, $urlRouterProvider){
     controller: 'AuthCtrl',
     onEnter: ['$state', 'auth', function($state,auth){
       if(auth.isLoggedIn()){
-        $state.go('locations');
+        $state.go('dashboard');
+      }
+    }]
+  });
+  
+  $stateProvider.state('registerOrg', {
+    url: '/registerOrg',
+    templateUrl: 'partials/registerOrg.html',
+    controller: 'AuthCtrl',
+    onEnter: ['$state', 'auth', function($state, auth){
+      if(auth.isLoggedIn()){
+        $state.go('orgdashboard');
       }
     }]
   });
