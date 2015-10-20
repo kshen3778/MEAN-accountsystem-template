@@ -239,20 +239,32 @@ app.config([
 '$urlRouterProvider',
 function($stateProvider, $urlRouterProvider){
   
-  //locations state
-  $stateProvider.state('locations', {
-    url: '/locations',
-    templateUrl: '/locations.html',
-    controller: 'MainCtrl',
+  //user dashboard state (get all tasks)
+  $stateProvider.state('dashboard', {
+    url: '/dashboard',
+    templateUrl: 'partials/dashboard.html'
+    /*controller: 'MainCtrl',
     resolve: {
-      locationsPromise: ['locations', function(locations){
-        return locations.getAll();
+      tasksPromise: ['tasks', function(tasks){
+        return tasks.getAll();
       }]
-    }
+    }*/
   });
   
-  //location state(single location)
-  $stateProvider.state('location', {
+  $stateProvider.state('orgdashboard', {
+    url: '/orgdashboard',
+    templateUrl: 'partials/orgdashboard.html'
+    /*controller: 'MainCtrl',
+    resolve: {
+      tasksPromise: ['tasks', function(tasks){
+        return tasks.getAll();
+      }]
+    }*/
+  });
+  
+  //task state (single task)
+  //TODO later
+  /*$stateProvider.state('location', {
     url: '/locations/{id}',
     templateUrl: '/location.html',
     controller: 'LocationCtrl',
@@ -262,7 +274,7 @@ function($stateProvider, $urlRouterProvider){
         return locations.get($stateParams.id);
       }]
     }
-  });
+  });*/
   
   //user login state
   $stateProvider.state('login', {

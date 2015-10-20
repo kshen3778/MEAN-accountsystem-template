@@ -6,7 +6,8 @@ var UserSchema = new mongoose.Schema({
     email: {type: String, unique: true},
     hash: String,
     salt: String,
-    tasks: [{type: mongoose.Schema.Types.ObjectId, ref: 'Task'}]
+    tasks: [{type: mongoose.Schema.Types.ObjectId, ref: 'Task'}],
+    type: String
 });
 
 UserSchema.methods.setPassword = function(password){

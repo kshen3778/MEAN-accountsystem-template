@@ -15,9 +15,9 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-//get user's locations
-router.get('/locations', auth, function(req,res,next){
-    User.findOne({email: req.payload.user.email}, function(err, user){
+//user's dashboard
+router.get('/dashboard', auth, function(req,res,next){
+    /*User.findOne({email: req.payload.user.email}, function(err, user){
         
         if(err){return err;}
 
@@ -27,7 +27,11 @@ router.get('/locations', auth, function(req,res,next){
             }
             res.json(locations.locations);
         });
-    });
+    });*/
+});
+
+router.get('/orgdashboard', auth, function(req,res,next){
+    
 });
 
 //create locations
@@ -98,6 +102,7 @@ router.post('/register', function(req, res, next){
    var user = new User();
    
    user.email = req.body.email;
+   user.type = "user";
    user.setPassword(req.body.password);
    user.save(function(err){
        if(err){
@@ -117,7 +122,12 @@ router.post('/registerorg', function(req, res, next){
    
    var org = new Organization();
    
+   org.name = req.body.name;
    org.email = req.body.email;
+   org.desc = req.body.desc;
+   org.city = req.body.city;
+   org.country = req.body.country;
+   org.type = "organization";
    org.setPassword(req.body.password);
    org.save(function(err){
       if(err){
@@ -130,8 +140,8 @@ router.post('/registerorg', function(req, res, next){
 
 //user login
 router.post('/login', function(req,res,next){
-   if(!req.body.email || !req.body.password || !req.body.name){
-       return res.status(400).json({message: 'Please fill out all fields'});
+   if(!req.body.email || !req.body.password){
+       return res.status(400).json({message: 'Please fill out al required fields'});
    }
    
    passport.authenticate('user-local', function(err, user, info){

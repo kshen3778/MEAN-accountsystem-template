@@ -4,13 +4,14 @@ var jwt = require('jsonwebtoken');
 
 var OrganizationSchema = new mongoose.Schema({
     name: String,
-    description: String,
+    desc: String,
     city: String,
     country: String,
     email: {type: String, unique: true},
     hash: String,
     salt: String,
-    tasks: [{type: mongoose.Schema.Types.ObjectId, ref: 'Task'}]
+    tasks: [{type: mongoose.Schema.Types.ObjectId, ref: 'Task'}],
+    type: String,
 });
 
 OrganizationSchema.methods.setPassword = function(password){
