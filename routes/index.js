@@ -4,7 +4,7 @@ var passport = require('passport');
 var jwt = require('express-jwt');
 var User = mongoose.model('User');
 var Organization = mongoose.model('Organization');
-var Location = mongoose.model('Location');
+//var Location = mongoose.model('Location');
 
 var router = express.Router();
 
@@ -34,64 +34,6 @@ router.get('/orgdashboard', auth, function(req,res,next){
     
 });
 
-//create locations
-router.post('/locations', auth, function(req,res,next){
-   var location = new Location(req.body); 
-   location.user = req.payload.user;
-   location.author = req.payload.email;
-   
-   location.save(function(err, location){
-       //User.findOne({email: req.payload.email}, function(err, user){
-           if(err){
-               return next(err);
-           }
-           //req.payload.user.locations.push(location);
-           //console.log(req.payload.user);
-           User.update({email: req.payload.email},{$addToSet:{locations: location}},function(err, user){
-              if(err){
-                  return next(err);
-              }
-              res.json(location);
-           });
-       //});
-   });
-});
-
-//preload location
-router.param('location', function(req,res,next,id){
-   var query = Location.findById(id);
-   query.exec(function(err, location){
-      if(err){
-          return next(err);
-      }
-      if(!location){
-          return next(new Error('can\'t find location'));
-      }
-      
-      req.location = location;
-      return next();
-   });
-});
-
-//get specific location
-router.get('/locations/:location',function(req, res, next){
-    res.json(req.location);
-});
-
-//edit specific location
-router.put('/locations/:location/edit', auth, function(req,res,next){
-   console.log("req.");
-   console.log(req.edits); //<---- the problem lies in req.body
-   req.location.edit(req.edits, function(err, location){
-       if(err){
-           return next(err);
-       }
-       console.log("new location json");
-       console.log(location);
-       res.json(location);
-   });
-   
-});
 
 //user registration
 router.post('/register', function(req, res, next){
