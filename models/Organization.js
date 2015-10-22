@@ -34,6 +34,7 @@ OrganizationSchema.methods.generateJWT = function(){
       _id: this._id,
       name: this.name,
       email: this.email,
+      type: this.type,
       org: this, //store the entire org object in the jwt token
       exp: parseInt(exp.getTime() / 1000),
   }, 'SECRET');

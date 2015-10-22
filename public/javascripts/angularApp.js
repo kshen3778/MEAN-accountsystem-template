@@ -1,7 +1,7 @@
 var app = angular.module('test', ['ui.router']);
 //test account:
-//user: helloworl@gmail.com (missing 'd' on purpose)
-//password: helloworld
+//org: lol@gmail.com
+//password: lol123
 app.factory('locations', ['$http', 'auth', function($http, auth){
     var o = {
       locations: []  

@@ -29,6 +29,7 @@ UserSchema.methods.generateJWT = function(){
   return jwt.sign({
       _id: this._id,
       email: this.email,
+      type: this.type,
       user: this, //store the entire user object in the jwt token
       exp: parseInt(exp.getTime() / 1000),
   }, 'SECRET');
