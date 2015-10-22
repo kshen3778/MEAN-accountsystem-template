@@ -7,10 +7,13 @@ var bodyParser = require('body-parser');
 
 var passport = require('passport');
 
+// Any database account: user: siteUserAdmin, pass: password
+//db database account: user: dbUserAdmin, pass: password
 var mongoose = require("mongoose");
 mongoose.connect("mongodb://kshen3778-mean-accountsystem-template-1845614:27017/db");
-require('./models/Location');
+require('./models/Task');
 require('./models/User');
+require('./models/Organization');
 require('./config/passport');
 var routes = require('./routes/index');
 var users = require('./routes/users');

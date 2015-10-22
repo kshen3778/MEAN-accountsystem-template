@@ -15,6 +15,8 @@
             <li ng-show="isLoggedIn()"><a href="" ng-click="logOut()">Log Out</a></li>
             <li ng-hide="isLoggedIn()"><a href="/#/login">Log In</a></li>
             <li ng-hide="isLoggedIn()"><a href="/#/register">Register</a></li>
+            <li ng-hide="isLoggedIn()"><a href="/#/loginOrg">Organization Log In</a></li>
+            <li ng-hide="isLoggedIn()"><a href="/#/registerOrg">Organization Register</a></li>
           </ul>
       </nav>
       
@@ -24,7 +26,7 @@
             </div>
       </div>
       
-       <script type="text/ng-template" id="/locations.html">
+      <!-- <script type="text/ng-template" id="/locations.html">
             <div class="page-header">
                 <h1>Test</h1>
             </div>
@@ -64,9 +66,9 @@
                 <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can add a location. </h3>
             </div>
             
-        </script>
+        </script>-->
         
-        <script type="text/ng-template" id="/location.html">
+        <!--<script type="text/ng-template" id="/location.html">
             <div class="page-header" ng-show="isLoggedIn()">
                 <h3>
                     <span ng-show="location.title">
@@ -119,10 +121,10 @@
             <div ng-hide="isLoggedIn()">
                 <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can edit your locations.</h3>
             </div>
-        </script>
+        </script>-->
         
          <!--registration template-->
-       <script type="text/ng-template" id="/register.html">
+       <!--<script type="text/ng-template" id="/register.html">
         
            <div class="page-header">
                 <h1>Test</h1>
@@ -145,9 +147,9 @@
                 <button type="submit" class="btn btn-primary">Register</button>
             </form> 
             
-        </script>
+        </script>-->
         
-        <script type="text/ng-template" id="/login.html">
+        <!--<script type="text/ng-template" id="/login.html">
             <div class="page-header">
                 <h1>Test</h1>
             </div>
@@ -168,7 +170,7 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Log In</button>
             </form>
-        </script>
+        </script>-->
         
   </body>
 </html>

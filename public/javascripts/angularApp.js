@@ -1,7 +1,7 @@
 var app = angular.module('test', ['ui.router']);
 //test account:
-//user: helloworl@gmail.com (missing 'd' on purpose)
-//password: helloworld
+//org: lol@gmail.com
+//password: lol123
 app.factory('locations', ['$http', 'auth', function($http, auth){
     var o = {
       locations: []  
@@ -70,7 +70,7 @@ app.factory('auth', ['$http', '$window', function($http, $window){
       }
     };
     
-    //return username of logged in user
+    //return email of logged in user or org
     auth.currentUser = function(){
       if(auth.isLoggedIn()){
         var token = auth.getToken();
@@ -86,12 +86,26 @@ app.factory('auth', ['$http', '$window', function($http, $window){
       });
     };
     
-    //login and save the token
+    //register the org and save token
+    auth.registerOrg = function(org){
+      return $http.post('/registerorg', org).success(function(data){
+        auth.saveToken(data.token);
+      });
+    };
+    
+    //login user and save the token
     auth.logIn = function(user){
       console.log("in auth factory's login method");
       console.log(user);
       return $http.post('/login', user).success(function(data){
         auth.saveToken(data.token); 
+      });
+    };
+    
+    //login an org
+    auth.logInOrg = function(org){
+      return $http.post('/loginorg', org).success(function(data){
+        auth.saveToken(data.token);
       });
     };
     
@@ -151,8 +165,17 @@ function($scope, $state, auth){
     auth.register($scope.user).error(function(error){
       $scope.error = error;
     }).then(function(){
-      $state.go('locations');
+      $state.go('dashboard');
     });
+  };
+  
+  //calls auth factory's registerOrg method
+  $scope.registerOrg = function(){
+    auth.registerOrg($scope.org).error(function(error){
+      $scope.error = error;
+    }).then(function(){
+      $state.go('orgdashboard'); //organization dashboard
+    })
   };
   
   //calls the auth factory's login method
@@ -162,9 +185,19 @@ function($scope, $state, auth){
     auth.logIn($scope.user).error(function(error){
       $scope.error = error;
     }).then(function(){
-      $state.go('locations');
+      $state.go('dashboard'); //user dashboard
     });
   };
+  
+  //calls the auth factory's logInOrg method
+  $scope.logInOrg = function(){
+    auth.logInOrg($scope.org).error(function(error){
+      $scope.error = error;
+    }).then(function(){
+      $state.go('orgdashboard');
+    });
+  };
+  
 }]);
 
 //control a location's details
@@ -206,20 +239,32 @@ app.config([
 '$urlRouterProvider',
 function($stateProvider, $urlRouterProvider){
   
-  //locations state
-  $stateProvider.state('locations', {
-    url: '/locations',
-    templateUrl: '/locations.html',
-    controller: 'MainCtrl',
+  //user dashboard state (get all tasks)
+  $stateProvider.state('dashboard', {
+    url: '/dashboard',
+    templateUrl: 'partials/dashboard.html'
+    /*controller: 'MainCtrl',
     resolve: {
-      locationsPromise: ['locations', function(locations){
-        return locations.getAll();
+      tasksPromise: ['tasks', function(tasks){
+        return tasks.getAll();
       }]
-    }
+    }*/
   });
   
-  //location state(single location)
-  $stateProvider.state('location', {
+  $stateProvider.state('orgdashboard', {
+    url: '/orgdashboard',
+    templateUrl: 'partials/orgdashboard.html'
+    /*controller: 'MainCtrl',
+    resolve: {
+      tasksPromise: ['tasks', function(tasks){
+        return tasks.getAll();
+      }]
+    }*/
+  });
+  
+  //task state (single task)
+  //TODO later
+  /*$stateProvider.state('location', {
     url: '/locations/{id}',
     templateUrl: '/location.html',
     controller: 'LocationCtrl',
@@ -229,27 +274,50 @@ function($stateProvider, $urlRouterProvider){
         return locations.get($stateParams.id);
       }]
     }
-  });
+  });*/
   
-  //login state
+  //user login state
   $stateProvider.state('login', {
     url: '/login',
-    templateUrl: '/login.html',
+    templateUrl: 'partials/login.html',
     controller: 'AuthCtrl',
     onEnter: ['$state', 'auth', function($state,auth){
       if(auth.isLoggedIn()){
-        $state.go('locations');
+        $state.go('dashboard');
+      }
+    }]
+  });
+  
+  //organization login state
+  $stateProvider.state('loginOrg', {
+    url: '/loginOrg',
+    templateUrl: 'partials/loginOrg.html',
+    controller: 'AuthCtrl',
+    onEnter: ['$state', 'auth', function($state, auth){
+      if(auth.isLoggedIn()){
+        $state.go('orgdashboard');
       }
     }]
   });
   
   $stateProvider.state('register', {
     url: '/register',
-    templateUrl: '/register.html',
+    templateUrl: 'partials/register.html',
     controller: 'AuthCtrl',
     onEnter: ['$state', 'auth', function($state,auth){
       if(auth.isLoggedIn()){
-        $state.go('locations');
+        $state.go('dashboard');
+      }
+    }]
+  });
+  
+  $stateProvider.state('registerOrg', {
+    url: '/registerOrg',
+    templateUrl: 'partials/registerOrg.html',
+    controller: 'AuthCtrl',
+    onEnter: ['$state', 'auth', function($state, auth){
+      if(auth.isLoggedIn()){
+        $state.go('orgdashboard');
       }
     }]
   });

@@ -6,7 +6,8 @@ var UserSchema = new mongoose.Schema({
     email: {type: String, unique: true},
     hash: String,
     salt: String,
-    locations: [{type: mongoose.Schema.Types.ObjectId, ref: 'Location'}]
+    tasks: [{type: mongoose.Schema.Types.ObjectId, ref: 'Task'}],
+    type: String
 });
 
 UserSchema.methods.setPassword = function(password){
@@ -28,6 +29,7 @@ UserSchema.methods.generateJWT = function(){
   return jwt.sign({
       _id: this._id,
       email: this.email,
+      type: this.type,
       user: this, //store the entire user object in the jwt token
       exp: parseInt(exp.getTime() / 1000),
   }, 'SECRET');

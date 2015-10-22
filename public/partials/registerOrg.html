@@ -1,0 +1,31 @@
+<div class="page-header">
+    <h1>Commit</h1>
+</div>
+            
+<div ng-show="error" class="alert alert-danger row">
+    <span>{{ error.message }}</span>
+</div>
+            
+            <form ng-submit="registerOrg()" style="margin-top:30px;">
+                <h3>Register</h3>
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Name" ng-model="org.name"></input>
+                </div>
+                
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="City" ng-model="org.city"></input>
+                </div>
+                
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Country" ng-model="org.country"></input>
+                </div>
+                
+                <div class="form-group">
+                    <input type="email" class="form-control" placeholder="Email" ng-model="org.email"></input>
+                </div>
+                
+                <div class="form-group">
+                    <input type="password" class="form-control" placeholder="Password" ng-model="org.password"></input>
+                </div>
+                <button type="submit" class="btn btn-primary">Register</button>
+            </form> 
