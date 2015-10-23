@@ -2,24 +2,36 @@ var app = angular.module('test', ['ui.router']);
 //test account:
 //org: lol@gmail.com
 //password: lol123
-app.factory('locations', ['$http', 'auth', function($http, auth){
+app.factory('tasks', ['$http', 'auth', function($http, auth){
     var o = {
-      locations: []  
+      tasks: []  
     };
     
-    //get all of users locations
+    //get all of user/org's tasks
     o.getAll = function(){
-      return $http.get('/locations', {
+      return $http.get('/dashboard', {
         //pass JWT token
         headers: {Authorization: 'Bearer ' + auth.getToken()}
       }).success(function(data){
-        angular.copy(data, o.locations);   
+        angular.copy(data, o.tasks);   
         
       });
     };
     
-    //create a location
-    o.create  = function(location){
+    o.getAllOrg = function(){
+      return $http.get('/orgdashboard', {
+        //pass JWT token
+        headers: {Authorization: 'Bearer ' + auth.getToken()}
+      }).success(function(data){
+        angular.copy(data, o.tasks);   
+  
+      });
+    }
+    
+    
+    //create a task
+    /*
+    o.create  = function(task){
       return $http.post('/locations', location, {
         headers: {Authorization: 'Bearer ' + auth.getToken()}
       }).success(function(data){
@@ -27,6 +39,7 @@ app.factory('locations', ['$http', 'auth', function($http, auth){
       });
     };
     
+    /*
     //retrieve a single location
     o.get = function(id){
       return $http.get('/locations/' + id).then(function(res){
@@ -42,7 +55,7 @@ app.factory('locations', ['$http', 'auth', function($http, auth){
         headers: {Authorization: 'Bearer ' + auth.getToken()}
       });
     };
-    
+    */
     return o;
 }]);
 
@@ -78,6 +91,15 @@ app.factory('auth', ['$http', '$window', function($http, $window){
         return payload.email;
       }  
     };
+    
+    //return type of logged in entity
+    auth.currentType = function(){
+      if(auth.isLoggedIn()){
+        var token = auth.getToken();
+        var payload = JSON.parse($window.atob(token.split('.')[1]));
+        return payload.type;
+      }  
+    }
     
     //register the user and save token
     auth.register = function(user){
@@ -120,25 +142,25 @@ app.factory('auth', ['$http', '$window', function($http, $window){
 //control user and locations
 app.controller('MainCtrl', [
     '$scope',
-    'locations',
+    'tasks',
     'auth',
-    function($scope, locations, auth){
-        $scope.locations = locations.locations;
+    function($scope, tasks, auth){
+        $scope.tasks = tasks.tasks; //task factory
         $scope.isLoggedIn = auth.isLoggedIn;
         
         //add a new location
-        $scope.addLocation = function(){
+        /*$scope.addTask = function(){
           if(!$scope.name || $scope.name === ""){
               return;
           }  
-          locations.create({
+          tasks.create({
              name: $scope.name,
              address: $scope.address,
              city: $scope.city,
              country: $scope.country,
              data: $scope.data,
           });
-        };
+        };*/
     }
 ]);
 
@@ -242,24 +264,24 @@ function($stateProvider, $urlRouterProvider){
   //user dashboard state (get all tasks)
   $stateProvider.state('dashboard', {
     url: '/dashboard',
-    templateUrl: 'partials/dashboard.html'
-    /*controller: 'MainCtrl',
+    templateUrl: 'partials/dashboard.html',
+    controller: 'MainCtrl',
     resolve: {
       tasksPromise: ['tasks', function(tasks){
         return tasks.getAll();
       }]
-    }*/
+    }
   });
   
   $stateProvider.state('orgdashboard', {
     url: '/orgdashboard',
-    templateUrl: 'partials/orgdashboard.html'
-    /*controller: 'MainCtrl',
+    templateUrl: 'partials/orgdashboard.html',
+    controller: 'MainCtrl',
     resolve: {
       tasksPromise: ['tasks', function(tasks){
-        return tasks.getAll();
+        return tasks.getAllOrg();
       }]
-    }*/
+    }
   });
   
   //task state (single task)

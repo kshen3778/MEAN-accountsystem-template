@@ -28,7 +28,6 @@ router.get('/dashboard', auth, function(req,res,next){
             res.json(locations.locations);
         });
     });*/
-    if(req.payload.type === "user"){
         User.findOne({email: req.payload.user.email}, function(err, user){
         
             if(err){return err;}
@@ -40,10 +39,11 @@ router.get('/dashboard', auth, function(req,res,next){
                 res.json(tasks);
             });
         });
-    }
     
-    else if(req.payload.type === "organization"){
-        Organization.findOne({email: req.payload.org.email}, function(err, org){
+});
+
+router.get('/orgdashboard', auth, function(req,res,next){
+    Organization.findOne({email: req.payload.org.email}, function(err, org){
         
             if(err){return err;}
     
@@ -53,12 +53,7 @@ router.get('/dashboard', auth, function(req,res,next){
                 }
                 res.json(tasks);
             });
-        });
-    }
-});
-
-router.get('/orgdashboard', auth, function(req,res,next){
-    
+    });
 });
 
 //user registration
