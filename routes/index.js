@@ -72,6 +72,29 @@ router.post('/tasks', auth, function(req, res, next){
    
 });
 
+//preload tasks
+router.param('task', function(req,res,next,id){
+   var query = Task.findById(id); //find the post
+   
+   // try to get the post details from the Tasks model and attach it to the request object
+   query.exec(function(err, task){
+      if(err){
+          return next(err);
+      }
+      if(!task){
+          return next(new Error('Can\'t find task'));
+      }
+      
+      req.task = task;
+      return next();
+   });
+});
+
+//retrieve a specific task
+router.get('/tasks/:task', function(req,res,next){
+   res.json(req.task);
+});
+
 //user registration
 router.post('/register', function(req, res, next){
    if(!req.body.email || !req.body.password){

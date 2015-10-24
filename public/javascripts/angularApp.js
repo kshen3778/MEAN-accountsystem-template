@@ -38,14 +38,15 @@ app.factory('tasks', ['$http', 'auth', function($http, auth){
       });
     };
     
-    /*
-    //retrieve a single location
+    
+    //retrieve a single task
     o.get = function(id){
-      return $http.get('/locations/' + id).then(function(res){
+      return $http.get('/tasks/' + id).then(function(res){
         return res.data;
       });
     };
     
+    /*
     //edit a location
     o.editLocation = function(location, edits){
       console.log("edits");
@@ -219,37 +220,17 @@ function($scope, $state, auth){
   
 }]);
 
-//control a location's details
+//control a task's info
 app.controller('LocationCtrl', [
 '$scope',
-'locations',
-'location', //injected via the location state's resolve
+'tasks',
+'task', //injected via the task state's resolve
 'auth',
 function($scope, locations, location, auth){
   console.log(location);
   $scope.location = location;
   $scope.isLoggedIn = auth.isLoggedIn;
   
-  $scope.editLocation = function(){
-        console.log("edit location");
-        locations.editLocation(location._id, {
-          //body: $scope.body
-          edits: {
-            name: $scope.name,
-            address: $scope.address,
-            city: $scope.city,
-            country: $scope.country,
-            data: $scope.data
-          }
-        }).success(function(data){
-          console.log("new location data");
-          console.log(data);
-          location = data;
-        });
-
-        $scope.body = '';
-
-  };
   
 }]);
 
@@ -282,18 +263,17 @@ function($stateProvider, $urlRouterProvider){
   });
   
   //task state (single task)
-  //TODO later
-  /*$stateProvider.state('location', {
-    url: '/locations/{id}',
-    templateUrl: '/location.html',
-    controller: 'LocationCtrl',
+  $stateProvider.state('task', {
+    url: '/tasks/{id}',
+    templateUrl: '/task.html',
+    controller: 'TaskCtrl',
     resolve: {
-      //injected into LocationCtrl
-      location: ['$stateParams', 'locations', function($stateParams, locations){
-        return locations.get($stateParams.id);
+      //injected into TaskCtrl
+      location: ['$stateParams', 'Tasks', function($stateParams, tasks){
+        return tasks.get($stateParams.id);
       }]
     }
-  });*/
+  });
   
   //user login state
   $stateProvider.state('login', {
