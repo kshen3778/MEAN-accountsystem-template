@@ -30,12 +30,11 @@ app.factory('tasks', ['$http', 'auth', function($http, auth){
     
     
     //create a task
-    /*
     o.create  = function(task){
-      return $http.post('/locations', location, {
+      return $http.post('/tasks', task, {
         headers: {Authorization: 'Bearer ' + auth.getToken()}
       }).success(function(data){
-         o.locations.push(data); 
+         o.tasks.push(data); 
       });
     };
     
@@ -148,19 +147,17 @@ app.controller('MainCtrl', [
         $scope.tasks = tasks.tasks; //task factory
         $scope.isLoggedIn = auth.isLoggedIn;
         
-        //add a new location
-        /*$scope.addTask = function(){
+        //add a new task
+        $scope.addTask = function(){
           if(!$scope.name || $scope.name === ""){
               return;
           }  
           tasks.create({
              name: $scope.name,
-             address: $scope.address,
-             city: $scope.city,
-             country: $scope.country,
-             data: $scope.data,
+             description: $scope.desc,
+             hours: $scope.hours
           });
-        };*/
+        };
     }
 ]);
 

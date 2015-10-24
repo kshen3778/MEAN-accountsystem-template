@@ -4,6 +4,7 @@ var passport = require('passport');
 var jwt = require('express-jwt');
 var User = mongoose.model('User');
 var Organization = mongoose.model('Organization');
+var Task = mongoose.model('Task');
 //var Location = mongoose.model('Location');
 
 var router = express.Router();
@@ -54,6 +55,21 @@ router.get('/orgdashboard', auth, function(req,res,next){
                 res.json(tasks);
             });
     });
+});
+
+//create a task
+router.post('/tasks', auth, function(req, res, next){
+
+   var task = new Task(req.body); //create a new post with user input info
+   task.organization = req.payload.org;
+   
+   task.save(function(err, task){
+      if(err){ 
+          return next(err); 
+      } 
+      res.json(task);
+   });
+   
 });
 
 //user registration
