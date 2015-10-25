@@ -47,12 +47,14 @@ router.get('/orgdashboard', auth, function(req,res,next){
     Organization.findOne({email: req.payload.org.email}, function(err, org){
         
             if(err){return err;}
-    
+            
+            //get the organization's tasks
             org.populate('tasks', function(err, tasks){
                 if(err){
                     return next(err);
                 }
-                res.json(tasks);
+                console.log("tasks route " + tasks.tasks);
+                res.json(tasks.tasks);
             });
     });
 });
@@ -67,7 +69,12 @@ router.post('/tasks', auth, function(req, res, next){
       if(err){ 
           return next(err); 
       } 
-      res.json(task);
+      Organization.update({email: req.payload.email},{$addToSet:{tasks: task}},function(err, org){
+            if(err){
+                return next(err);
+            }
+            res.json(task);
+      });
    });
    
 });

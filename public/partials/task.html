@@ -1,0 +1,19 @@
+<div class="page-header" ng-show="isLoggedIn()">
+                <h3>
+                    <span ng-show="task.name">
+                        Name: {{task.name}}
+                    </span>
+                    <br>
+                    <span ng-show="task.desc">
+                        Description: {{task.desc}}
+                    </span>
+                    <br>
+                    <span ng-show="task.hours">
+                        Hours: {{task.hours}}
+                    </span>
+                    <br>
+                    <span ng-show="task.organization">
+                        Creator: {{task.organization.name}}
+                    </span>
+                </h3>
+</div>

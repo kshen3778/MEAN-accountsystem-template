@@ -11,7 +11,7 @@ var OrganizationSchema = new mongoose.Schema({
     hash: String,
     salt: String,
     tasks: [{type: mongoose.Schema.Types.ObjectId, ref: 'Task'}],
-    type: String,
+    type: String
 });
 
 OrganizationSchema.methods.setPassword = function(password){
