@@ -23,9 +23,7 @@ app.factory('tasks', ['$http', 'auth', function($http, auth){
         //pass JWT token
         headers: {Authorization: 'Bearer ' + auth.getToken()}
       }).success(function(data){
-        console.log("data " + data);
         angular.copy(data, o.tasks);  
-        console.log("o.tasks " + o.tasks);
       });
     }
     
@@ -227,9 +225,8 @@ app.controller('TaskCtrl', [
 'tasks',
 'task', //injected via the task state's resolve
 'auth',
-function($scope, locations, location, auth){
-  console.log(location);
-  $scope.location = location;
+function($scope, tasks, task, auth){
+  $scope.task = task;
   $scope.isLoggedIn = auth.isLoggedIn;
   
   
@@ -266,7 +263,7 @@ function($stateProvider, $urlRouterProvider){
   //task state (single task)
   $stateProvider.state('task', {
     url: '/tasks/{id}',
-    templateUrl: '/task.html',
+    templateUrl: 'partials/task.html',
     controller: 'TaskCtrl',
     resolve: {
       //injected into TaskCtrl
