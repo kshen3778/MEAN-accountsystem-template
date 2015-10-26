@@ -13,7 +13,7 @@ var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+  //res.render('index', { title: 'Express' });
 });
 
 //user's dashboard
@@ -98,7 +98,16 @@ router.param('task', function(req,res,next,id){
 
 //retrieve a specific task
 router.get('/tasks/:task', function(req,res,next){
-   res.json(req.task);
+   var info = new Array();
+   Organization.findById(req.task.organization, function (err, org) {
+      if(err){
+          return next(err);
+      }
+      info.push(req.task);
+      info.push(org.name);
+      res.json(info);
+   });
+   //res.json(req.task);
 });
 
 //user registration

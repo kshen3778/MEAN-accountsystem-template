@@ -194,7 +194,7 @@ function($scope, $state, auth){
       $scope.error = error;
     }).then(function(){
       $state.go('orgdashboard'); //organization dashboard
-    })
+    });
   };
   
   //calls the auth factory's login method
@@ -226,7 +226,8 @@ app.controller('TaskCtrl', [
 'task', //injected via the task state's resolve
 'auth',
 function($scope, tasks, task, auth){
-  $scope.task = task;
+  $scope.task = task[0];
+  $scope.orgname = task[1];
   $scope.isLoggedIn = auth.isLoggedIn;
   
   
