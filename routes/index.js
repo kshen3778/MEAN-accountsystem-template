@@ -13,22 +13,13 @@ var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  //res.render('index', { title: 'Express' });
+  //console.log(req.payload);
+  res.render('index', { title: 'Express' });
+  //res.redirect("/orgdashboard");
 });
 
 //user's dashboard
 router.get('/dashboard', auth, function(req,res,next){
-    /*User.findOne({email: req.payload.user.email}, function(err, user){
-        
-        if(err){return err;}
-
-        user.populate('locations', function(err, locations){
-            if(err){
-                return next(err);
-            }
-            res.json(locations.locations);
-        });
-    });*/
         User.findOne({email: req.payload.user.email}, function(err, user){
         
             if(err){return err;}
