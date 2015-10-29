@@ -100,6 +100,10 @@ app.factory('auth', ['$http', '$window', function($http, $window){
       }  
     }
     
+    auth.isOrganization = function(){
+      return auth.currentType() === "organization";
+    }
+    
     //register the user and save token
     auth.register = function(user){
       return $http.post('/register', user).success(function(data){
@@ -169,6 +173,8 @@ function($scope,auth){
   //expose methods from auth factory
   $scope.isLoggedIn = auth.isLoggedIn;
   $scope.currentUser = auth.currentUser;
+  $scope.currentType = auth.currentType;
+  $scope.isOrganization = auth.isOrganization;
   $scope.logOut = auth.logOut;
 }]);
 
@@ -230,6 +236,21 @@ function($scope, tasks, task, auth){
   $scope.orgname = task[1];
   $scope.isLoggedIn = auth.isLoggedIn;
   
+  $scope.editTask = function(){
+        tasks.editLocation(task._id, {
+          //body: $scope.body
+          edits: {
+            name: $scope.name,
+            description: $scope.desc,
+            hours: $scope.hours
+          }
+        }).success(function(data){
+          $scope.task = data;
+        });
+
+        //$scope.body = '';
+
+  };
   
 }]);
 

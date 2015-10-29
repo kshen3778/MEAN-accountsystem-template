@@ -69,6 +69,17 @@ router.post('/tasks', auth, function(req, res, next){
    
 });
 
+//edit specific location
+router.put('/tasks/:task/edit', auth, function(req,res,next){
+   req.task.edit(req, function(err, task){
+       if(err){
+           return next(err);
+       }
+       res.json(task);
+   });
+   
+});
+
 //preload tasks
 router.param('task', function(req,res,next,id){
    var query = Task.findById(id); //find the post
