@@ -80,6 +80,27 @@ router.put('/tasks/:task/edit', auth, function(req,res,next){
    
 });
 
+//delete a specific task
+router.delete('/tasks/:task/delete', auth, function(req, res, next){
+    console.log("delete route");
+    Task.findById(req.params.task).exec(function(err, doc) {
+            if (err || !doc) {
+                res.statusCode = 404;
+                res.send({});
+            } else {
+                doc.remove(function(err) {
+                    if (err) {
+                        res.statusCode = 403;
+                        res.send(err);
+                    } else {
+                        console.log("delete route success");
+                        res.send({});
+                    }
+                });
+            }
+    }); 
+});
+
 //preload tasks
 router.param('task', function(req,res,next,id){
    var query = Task.findById(id); //find the post

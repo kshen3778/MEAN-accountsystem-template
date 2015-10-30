@@ -45,6 +45,14 @@ app.factory('tasks', ['$http', 'auth', function($http, auth){
       });
     };
     
+    o.delete = function(task){
+      console.log("delete function in factory");
+      return $http.delete('/tasks/' + task + '/delete' , {
+        headers: {Authorization: 'Bearer ' + auth.getToken()}
+      }).success(function(){
+        console.log("delete success");
+      });
+    }
     /*
     //edit a location
     o.editLocation = function(location, edits){
@@ -169,7 +177,7 @@ app.controller('MainCtrl', [
 app.controller('NavCtrl', [
 '$scope',
 'auth',
-function($scope,auth){
+function($scope, auth){
   //expose methods from auth factory
   $scope.isLoggedIn = auth.isLoggedIn;
   $scope.currentUser = auth.currentUser;
@@ -250,6 +258,11 @@ function($scope, tasks, task, auth){
 
         //$scope.body = '';
 
+  };
+  
+  $scope.deleteTask = function(){
+    console.log("deletetask angular");
+    tasks.delete(task[0]._id);
   };
   
 }]);
