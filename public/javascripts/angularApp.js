@@ -14,7 +14,6 @@ app.factory('tasks', ['$http', 'auth', function($http, auth){
         headers: {Authorization: 'Bearer ' + auth.getToken()}
       }).success(function(data){
         angular.copy(data, o.tasks);   
-        
       });
     };
     

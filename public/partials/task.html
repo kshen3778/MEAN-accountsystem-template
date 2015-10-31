@@ -16,8 +16,17 @@
                         Creator: {{orgname}}
                     </span>
                 </h3>
-                <button type="button" class="btn btn-success">Save</button>
-                <form ng-submit="deleteTask()">
-                    <button type="submit" class="btn btn-danger">Delete</button>
-                </form>
+                
+                <div class="row">
+                    <div class="col-sm-6">
+                        <form ng-submit="saveTask()">
+                            <button type="submit" class="btn btn-success">Save</button>
+                        </form>
+                    </div>
+                    <div class="col-sm-6">
+                        <form ng-submit="deleteTask()">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </div>
+                </div>
 </div>
