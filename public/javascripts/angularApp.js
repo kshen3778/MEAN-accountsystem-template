@@ -46,7 +46,7 @@ app.factory('tasks', ['$http', 'auth', function($http, auth){
     
     o.delete = function(task){
       console.log("delete function in factory");
-      return $http.delete('/tasks/' + task + '/delete' , {
+      return $http.get('/tasks/' + task + '/delete' , {
         headers: {Authorization: 'Bearer ' + auth.getToken()}
       }).success(function(){
         console.log("delete success");
@@ -235,10 +235,11 @@ function($scope, $state, auth){
 //control a task's info
 app.controller('TaskCtrl', [
 '$scope',
+'$state',
 'tasks',
 'task', //injected via the task state's resolve
 'auth',
-function($scope, tasks, task, auth){
+function($scope, $state, tasks, task, auth){
   $scope.task = task[0];
   $scope.orgname = task[1];
   $scope.isLoggedIn = auth.isLoggedIn;
@@ -261,7 +262,13 @@ function($scope, tasks, task, auth){
   
   $scope.deleteTask = function(){
     console.log("deletetask angular");
-    tasks.delete(task[0]._id);
+    tasks.delete(task[0]._id).error(function(error){
+      console.log("delete error");
+      $scope.error = error;
+    }).then(function(){
+      console.log("delete then");
+      $state.go('orgdashboard');
+    });;
   };
   
 }]);
@@ -306,6 +313,16 @@ function($stateProvider, $urlRouterProvider){
       }]
     }
   });
+  
+ /* $stateProvider.state('taskdelete', {
+    url: '/tasks/{id}/delete',
+    onEnter: ['$state', function($state){
+
+        console.log("redirect state");
+        $state.go('orgdashboard');
+      
+    }]
+  }); */
   
   //user login state
   $stateProvider.state('login', {

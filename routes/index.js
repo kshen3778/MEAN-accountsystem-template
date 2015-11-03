@@ -81,7 +81,7 @@ router.put('/tasks/:task/edit', auth, function(req,res,next){
 });
 
 //delete a specific task
-router.delete('/tasks/:task/delete', auth, function(req, res, next){
+router.get('/tasks/:task/delete', auth, function(req, res, next){
     console.log("delete route");
     Task.findById(req.params.task).exec(function(err, doc) {
             if (err || !doc) {
@@ -95,9 +95,14 @@ router.delete('/tasks/:task/delete', auth, function(req, res, next){
                     } else {
                         console.log("delete route success");
                         res.send({});
+                        
+                        //res.render('/orgdashboard');
                     }
                 });
             }
+            //res.json({token: org.generateJWT()});
+            //res.json({Authorization: 'Bearer ' + auth});
+            //res.redirect('/orgdashboard', {});
     }); 
 });
 
