@@ -45,11 +45,10 @@ app.factory('tasks', ['$http', 'auth', function($http, auth){
     };
     
     o.delete = function(task){
-      console.log("delete function in factory");
-      return $http.get('/tasks/' + task + '/delete' , {
+      return $http.delete('/tasks/' + task + '/delete' , {
         headers: {Authorization: 'Bearer ' + auth.getToken()}
       }).success(function(){
-        console.log("delete success");
+
       });
     }
     /*
@@ -127,8 +126,6 @@ app.factory('auth', ['$http', '$window', function($http, $window){
     
     //login user and save the token
     auth.logIn = function(user){
-      console.log("in auth factory's login method");
-      console.log(user);
       return $http.post('/login', user).success(function(data){
         auth.saveToken(data.token); 
       });
@@ -168,6 +165,9 @@ app.controller('MainCtrl', [
              description: $scope.desc,
              hours: $scope.hours
           });
+          $scope.name = "";
+          $scope.desc = "";
+          $scope.hours = "";
         };
     }
 ]);
@@ -253,7 +253,10 @@ function($scope, $state, tasks, task, auth){
             hours: $scope.hours
           }
         }).success(function(data){
-          $scope.task = data;
+          $scope.task.name = data.name;
+          $scope.task.desc = data.desc;
+          $scope.task.hours = data.hours;
+          $state.go('/tasks/' + task[0]._id);
         });
 
         //$scope.body = '';
@@ -261,12 +264,9 @@ function($scope, $state, tasks, task, auth){
   };
   
   $scope.deleteTask = function(){
-    console.log("deletetask angular");
     tasks.delete(task[0]._id).error(function(error){
-      console.log("delete error");
       $scope.error = error;
     }).then(function(){
-      console.log("delete then");
       $state.go('orgdashboard');
     });;
   };

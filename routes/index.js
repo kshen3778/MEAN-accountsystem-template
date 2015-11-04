@@ -81,8 +81,7 @@ router.put('/tasks/:task/edit', auth, function(req,res,next){
 });
 
 //delete a specific task
-router.get('/tasks/:task/delete', auth, function(req, res, next){
-    console.log("delete route");
+router.delete('/tasks/:task/delete', auth, function(req, res, next){
     Task.findById(req.params.task).exec(function(err, doc) {
             if (err || !doc) {
                 res.statusCode = 404;
@@ -93,7 +92,6 @@ router.get('/tasks/:task/delete', auth, function(req, res, next){
                         res.statusCode = 403;
                         res.send(err);
                     } else {
-                        console.log("delete route success");
                         res.send({});
                         
                         //res.render('/orgdashboard');
