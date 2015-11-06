@@ -9,7 +9,7 @@ var TaskSchema = new mongoose.Schema({
     organization: {type: mongoose.Schema.Types.ObjectId, ref: 'Organization'}
 });
 
-//edit a location
+//edit a task
 TaskSchema.methods.edit = function(edits,cb){
     
         this.name = edits.name;

@@ -39,6 +39,7 @@ app.factory('tasks', ['$http', 'auth', function($http, auth){
     
     //retrieve a single task
     o.get = function(id){
+      console.log(auth.getToken());
       return $http.get('/tasks/' + id).then(function(res){
         return res.data;
       });
@@ -51,16 +52,17 @@ app.factory('tasks', ['$http', 'auth', function($http, auth){
 
       });
     }
-    /*
-    //edit a location
-    o.editLocation = function(location, edits){
+    
+    //edit a task
+    o.editLocation = function(task, edits){
+      console.log(task);
       console.log("edits");
       console.log(edits);
-      return $http.put('/locations/' + location + '/edit', edits, {
+      return $http.put('/tasks/' + task + '/edit', edits, {
         headers: {Authorization: 'Bearer ' + auth.getToken()}
       });
     };
-    */
+    
     return o;
 }]);
 
@@ -256,7 +258,7 @@ function($scope, $state, tasks, task, auth){
           $scope.task.name = data.name;
           $scope.task.desc = data.desc;
           $scope.task.hours = data.hours;
-          $state.go('/tasks/' + task[0]._id);
+          //$state.go('/tasks/' + task[0]._id);
         });
 
         //$scope.body = '';
@@ -313,16 +315,7 @@ function($stateProvider, $urlRouterProvider){
       }]
     }
   });
-  
- /* $stateProvider.state('taskdelete', {
-    url: '/tasks/{id}/delete',
-    onEnter: ['$state', function($state){
 
-        console.log("redirect state");
-        $state.go('orgdashboard');
-      
-    }]
-  }); */
   
   //user login state
   $stateProvider.state('login', {
