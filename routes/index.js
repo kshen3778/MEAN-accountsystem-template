@@ -71,13 +71,14 @@ router.post('/tasks', auth, function(req, res, next){
 
 //edit specific location
 router.put('/tasks/:task/edit', auth, function(req,res,next){
-   console.log("Request edit data: " + req);
-   req.task.edit(req, function(err, task){
+   console.log("Request edit data: " + JSON.stringify(req.body));
+   req.task.edit(req.body, function(err, task){
        if(err){
            return next(err);
        }
        res.json(task);
    });
+   
    
 });
 
