@@ -2,6 +2,11 @@ var app = angular.module('test', ['ui.router']);
 //test account:
 //org: lol@gmail.com
 //password: lol123
+
+/*app.run(function(editableOptions) {
+  editableOptions.theme = 'bs3'; // bootstrap3 theme. Can be also 'bs2', 'default'
+});*/
+
 app.factory('tasks', ['$http', 'auth', function($http, auth){
     var o = {
       tasks: []  
@@ -54,7 +59,7 @@ app.factory('tasks', ['$http', 'auth', function($http, auth){
     }
     
     //edit a task
-    o.editLocation = function(task, edits){
+    o.editTask = function(task, edits){
       console.log(task);
       console.log("edits");
       console.log(edits);
@@ -247,18 +252,20 @@ function($scope, $state, tasks, task, auth){
   $scope.isLoggedIn = auth.isLoggedIn;
   
   $scope.editTask = function(){
-        tasks.editLocation(task._id, {
+        console.log("Task id: " + task[0]._id)
+        tasks.editTask(task[0]._id, {
           //body: $scope.body
           edits: {
             name: $scope.name,
-            description: $scope.desc,
+            description: $scope.description,
             hours: $scope.hours
           }
         }).success(function(data){
+          console.log("Success data: " + JSON.stringify(data));
           $scope.task.name = data.name;
-          $scope.task.desc = data.desc;
+          $scope.task.description = data.description;
           $scope.task.hours = data.hours;
-          //$state.go('/tasks/' + task[0]._id);
+          $state.go('task');
         });
 
         //$scope.body = '';
