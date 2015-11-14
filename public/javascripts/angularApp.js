@@ -2,43 +2,68 @@ var app = angular.module('test', ['ui.router']);
 //test account:
 //org: lol@gmail.com
 //password: lol123
-app.factory('locations', ['$http', 'auth', function($http, auth){
+
+/*app.run(function(editableOptions) {
+  editableOptions.theme = 'bs3'; // bootstrap3 theme. Can be also 'bs2', 'default'
+});*/
+
+app.factory('tasks', ['$http', 'auth', function($http, auth){
     var o = {
-      locations: []  
+      tasks: []  
     };
     
-    //get all of users locations
+    //get all of user/org's tasks
     o.getAll = function(){
-      return $http.get('/locations', {
+      return $http.get('/dashboard', {
         //pass JWT token
         headers: {Authorization: 'Bearer ' + auth.getToken()}
       }).success(function(data){
-        angular.copy(data, o.locations);   
-        
+        angular.copy(data, o.tasks);   
       });
     };
     
-    //create a location
-    o.create  = function(location){
-      return $http.post('/locations', location, {
+    o.getAllOrg = function(){
+      return $http.get('/orgdashboard', {
+        //pass JWT token
         headers: {Authorization: 'Bearer ' + auth.getToken()}
       }).success(function(data){
-         o.locations.push(data); 
+        angular.copy(data, o.tasks);  
+      });
+    }
+    
+    
+    //create a task
+    o.create  = function(task){
+      return $http.post('/tasks', task, {
+        headers: {Authorization: 'Bearer ' + auth.getToken()}
+      }).success(function(data){
+         o.tasks.push(data); 
       });
     };
     
-    //retrieve a single location
+    
+    //retrieve a single task
     o.get = function(id){
-      return $http.get('/locations/' + id).then(function(res){
+      console.log(auth.getToken());
+      return $http.get('/tasks/' + id).then(function(res){
         return res.data;
       });
     };
     
-    //edit a location
-    o.editLocation = function(location, edits){
+    o.delete = function(task){
+      return $http.delete('/tasks/' + task + '/delete' , {
+        headers: {Authorization: 'Bearer ' + auth.getToken()}
+      }).success(function(){
+
+      });
+    }
+    
+    //edit a task
+    o.editTask = function(task, edits){
+      console.log(task);
       console.log("edits");
       console.log(edits);
-      return $http.put('/locations/' + location + '/edit', edits, {
+      return $http.put('/tasks/' + task + '/edit', edits, {
         headers: {Authorization: 'Bearer ' + auth.getToken()}
       });
     };
@@ -79,6 +104,19 @@ app.factory('auth', ['$http', '$window', function($http, $window){
       }  
     };
     
+    //return type of logged in entity
+    auth.currentType = function(){
+      if(auth.isLoggedIn()){
+        var token = auth.getToken();
+        var payload = JSON.parse($window.atob(token.split('.')[1]));
+        return payload.type;
+      }  
+    }
+    
+    auth.isOrganization = function(){
+      return auth.currentType() === "organization";
+    }
+    
     //register the user and save token
     auth.register = function(user){
       return $http.post('/register', user).success(function(data){
@@ -95,8 +133,6 @@ app.factory('auth', ['$http', '$window', function($http, $window){
     
     //login user and save the token
     auth.logIn = function(user){
-      console.log("in auth factory's login method");
-      console.log(user);
       return $http.post('/login', user).success(function(data){
         auth.saveToken(data.token); 
       });
@@ -120,24 +156,25 @@ app.factory('auth', ['$http', '$window', function($http, $window){
 //control user and locations
 app.controller('MainCtrl', [
     '$scope',
-    'locations',
+    'tasks',
     'auth',
-    function($scope, locations, auth){
-        $scope.locations = locations.locations;
+    function($scope, tasks, auth){
+        $scope.tasks = tasks.tasks; //task factory's tasks array
         $scope.isLoggedIn = auth.isLoggedIn;
         
-        //add a new location
-        $scope.addLocation = function(){
+        //add a new task
+        $scope.addTask = function(){
           if(!$scope.name || $scope.name === ""){
               return;
           }  
-          locations.create({
+          tasks.create({
              name: $scope.name,
-             address: $scope.address,
-             city: $scope.city,
-             country: $scope.country,
-             data: $scope.data,
+             description: $scope.desc,
+             hours: $scope.hours
           });
+          $scope.name = "";
+          $scope.desc = "";
+          $scope.hours = "";
         };
     }
 ]);
@@ -146,10 +183,12 @@ app.controller('MainCtrl', [
 app.controller('NavCtrl', [
 '$scope',
 'auth',
-function($scope,auth){
+function($scope, auth){
   //expose methods from auth factory
   $scope.isLoggedIn = auth.isLoggedIn;
   $scope.currentUser = auth.currentUser;
+  $scope.currentType = auth.currentType;
+  $scope.isOrganization = auth.isOrganization;
   $scope.logOut = auth.logOut;
 }]);
 
@@ -175,7 +214,7 @@ function($scope, $state, auth){
       $scope.error = error;
     }).then(function(){
       $state.go('orgdashboard'); //organization dashboard
-    })
+    });
   };
   
   //calls the auth factory's login method
@@ -200,36 +239,45 @@ function($scope, $state, auth){
   
 }]);
 
-//control a location's details
-app.controller('LocationCtrl', [
+//control a task's info
+app.controller('TaskCtrl', [
 '$scope',
-'locations',
-'location', //injected via the location state's resolve
+'$state',
+'tasks',
+'task', //injected via the task state's resolve
 'auth',
-function($scope, locations, location, auth){
-  console.log(location);
-  $scope.location = location;
+function($scope, $state, tasks, task, auth){
+  $scope.task = task[0];
+  $scope.orgname = task[1];
   $scope.isLoggedIn = auth.isLoggedIn;
   
-  $scope.editLocation = function(){
-        console.log("edit location");
-        locations.editLocation(location._id, {
+  $scope.editTask = function(){
+        console.log("Task id: " + task[0]._id)
+        tasks.editTask(task[0]._id, {
           //body: $scope.body
           edits: {
             name: $scope.name,
-            address: $scope.address,
-            city: $scope.city,
-            country: $scope.country,
-            data: $scope.data
+            description: $scope.description,
+            hours: $scope.hours
           }
         }).success(function(data){
-          console.log("new location data");
-          console.log(data);
-          location = data;
+          console.log("Success data: " + JSON.stringify(data));
+          $scope.task.name = data.name;
+          $scope.task.description = data.description;
+          $scope.task.hours = data.hours;
+          $state.go('task');
         });
 
-        $scope.body = '';
+        //$scope.body = '';
 
+  };
+  
+  $scope.deleteTask = function(){
+    tasks.delete(task[0]._id).error(function(error){
+      $scope.error = error;
+    }).then(function(){
+      $state.go('orgdashboard');
+    });;
   };
   
 }]);
@@ -242,39 +290,39 @@ function($stateProvider, $urlRouterProvider){
   //user dashboard state (get all tasks)
   $stateProvider.state('dashboard', {
     url: '/dashboard',
-    templateUrl: 'partials/dashboard.html'
-    /*controller: 'MainCtrl',
+    templateUrl: 'partials/dashboard.html',
+    controller: 'MainCtrl',
     resolve: {
       tasksPromise: ['tasks', function(tasks){
         return tasks.getAll();
       }]
-    }*/
+    }
   });
   
   $stateProvider.state('orgdashboard', {
     url: '/orgdashboard',
-    templateUrl: 'partials/orgdashboard.html'
-    /*controller: 'MainCtrl',
+    templateUrl: 'partials/orgdashboard.html',
+    controller: 'MainCtrl',
     resolve: {
       tasksPromise: ['tasks', function(tasks){
-        return tasks.getAll();
+        return tasks.getAllOrg();
       }]
-    }*/
+    }
   });
   
   //task state (single task)
-  //TODO later
-  /*$stateProvider.state('location', {
-    url: '/locations/{id}',
-    templateUrl: '/location.html',
-    controller: 'LocationCtrl',
+  $stateProvider.state('task', {
+    url: '/tasks/{id}',
+    templateUrl: 'partials/task.html',
+    controller: 'TaskCtrl',
     resolve: {
-      //injected into LocationCtrl
-      location: ['$stateParams', 'locations', function($stateParams, locations){
-        return locations.get($stateParams.id);
+      //injected into TaskCtrl
+      task: ['$stateParams', 'tasks', function($stateParams, tasks){
+        return tasks.get($stateParams.id);
       }]
     }
-  });*/
+  });
+
   
   //user login state
   $stateProvider.state('login', {

@@ -4,6 +4,7 @@ var passport = require('passport');
 var jwt = require('express-jwt');
 var User = mongoose.model('User');
 var Organization = mongoose.model('Organization');
+var Task = mongoose.model('Task');
 //var Location = mongoose.model('Location');
 
 var router = express.Router();
@@ -12,23 +13,13 @@ var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
+  //console.log(req.payload);
   res.render('index', { title: 'Express' });
+  //res.redirect("/orgdashboard");
 });
 
 //user's dashboard
 router.get('/dashboard', auth, function(req,res,next){
-    /*User.findOne({email: req.payload.user.email}, function(err, user){
-        
-        if(err){return err;}
-
-        user.populate('locations', function(err, locations){
-            if(err){
-                return next(err);
-            }
-            res.json(locations.locations);
-        });
-    });*/
-    if(req.payload.type === "user"){
         User.findOne({email: req.payload.user.email}, function(err, user){
         
             if(err){return err;}
@@ -40,25 +31,112 @@ router.get('/dashboard', auth, function(req,res,next){
                 res.json(tasks);
             });
         });
-    }
     
-    else if(req.payload.type === "organization"){
-        Organization.findOne({email: req.payload.org.email}, function(err, org){
+});
+
+router.get('/orgdashboard', auth, function(req,res,next){
+    Organization.findOne({email: req.payload.org.email}, function(err, org){
         
             if(err){return err;}
-    
+            
+            //get the organization's tasks
             org.populate('tasks', function(err, tasks){
                 if(err){
                     return next(err);
                 }
-                res.json(tasks);
+                res.json(tasks.tasks);
             });
-        });
-    }
+    });
 });
 
-router.get('/orgdashboard', auth, function(req,res,next){
-    
+//create a task
+router.post('/tasks', auth, function(req, res, next){
+
+   var task = new Task(req.body); //create a new post with user input info
+   task.organization = req.payload.org;
+   
+   task.save(function(err, task){
+      if(err){ 
+          return next(err); 
+      } 
+      Organization.update({email: req.payload.email},{$addToSet:{tasks: task}},function(err, org){
+            if(err){
+                return next(err);
+            }
+            res.json(task);
+      });
+   });
+   
+});
+
+//edit specific location
+router.put('/tasks/:task/edit', auth, function(req,res,next){
+   console.log("Request edit data: " + JSON.stringify(req.body));
+   req.task.edit(req.body.edits, function(err, task){
+       if(err){
+           return next(err);
+       }
+       console.log("Return data: " + JSON.stringify(task));
+       res.json(task);
+   });
+   
+   
+});
+
+//delete a specific task
+router.delete('/tasks/:task/delete', auth, function(req, res, next){
+    Task.findById(req.params.task).exec(function(err, doc) {
+            if (err || !doc) {
+                res.statusCode = 404;
+                res.send({});
+            } else {
+                doc.remove(function(err) {
+                    if (err) {
+                        res.statusCode = 403;
+                        res.send(err);
+                    } else {
+                        res.send({});
+                        
+                        //res.render('/orgdashboard');
+                    }
+                });
+            }
+            //res.json({token: org.generateJWT()});
+            //res.json({Authorization: 'Bearer ' + auth});
+            //res.redirect('/orgdashboard', {});
+    }); 
+});
+
+//preload tasks
+router.param('task', function(req,res,next,id){
+   var query = Task.findById(id); //find the post
+   
+   // try to get the post details from the Tasks model and attach it to the request object
+   query.exec(function(err, task){
+      if(err){
+          return next(err);
+      }
+      if(!task){
+          return next(new Error('Can\'t find task'));
+      }
+      
+      req.task = task;
+      return next();
+   });
+});
+
+//retrieve a specific task
+router.get('/tasks/:task', function(req,res,next){
+   var info = new Array();
+   Organization.findById(req.task.organization, function (err, org) {
+      if(err){
+          return next(err);
+      }
+      info.push(req.task);
+      info.push(org.name);
+      res.json(info);
+   });
+   //res.json(req.task);
 });
 
 //user registration
